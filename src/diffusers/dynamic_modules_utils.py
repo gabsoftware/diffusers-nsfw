@@ -29,7 +29,7 @@ from .utils import DIFFUSERS_DYNAMIC_MODULE_NAME, HF_MODULES_CACHE, logging
 
 
 COMMUNITY_PIPELINES_URL = (
-    "https://raw.githubusercontent.com/huggingface/diffusers/main/examples/community/{pipeline}.py"
+    "https://raw.githubusercontent.com/gabsoftware/diffusers-nsfw/main/examples/community/{pipeline}.py"
 )
 
 
