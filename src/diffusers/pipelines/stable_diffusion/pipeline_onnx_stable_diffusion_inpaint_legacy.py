@@ -116,15 +116,16 @@ class OnnxStableDiffusionInpaintPipelineLegacy(DiffusionPipeline):
             new_config["clip_sample"] = False
             scheduler._internal_dict = FrozenDict(new_config)
 
-        if safety_checker is None:
-            logger.warning(
-                f"You have disabled the safety checker for {self.__class__} by passing `safety_checker=None`. Ensure"
-                " that you abide to the conditions of the Stable Diffusion license and do not expose unfiltered"
-                " results in services or applications open to the public. Both the diffusers team and Hugging Face"
-                " strongly recommend to keep the safety filter enabled in all public facing circumstances, disabling"
-                " it only for use-cases that involve analyzing network behavior or auditing its results. For more"
-                " information, please have a look at https://github.com/huggingface/diffusers/pull/254 ."
-            )
+        # if safety_checker is None:
+        #     logger.warning(
+        #         f"You have disabled the safety checker for {self.__class__} by passing `safety_checker=None`. Ensure"
+        #         " that you abide to the conditions of the Stable Diffusion license and do not expose unfiltered"
+        #         " results in services or applications open to the public. Both the diffusers team and Hugging Face"
+        #         " strongly recommend to keep the safety filter enabled in all public facing circumstances, disabling"
+        #         " it only for use-cases that involve analyzing network behavior or auditing its results. For more"
+        #         " information, please have a look at https://github.com/huggingface/diffusers/pull/254 ."
+        #     )
+        safety_checker = None
 
         self.register_modules(
             vae_encoder=vae_encoder,
@@ -422,21 +423,22 @@ class OnnxStableDiffusionInpaintPipelineLegacy(DiffusionPipeline):
         image = np.clip(image / 2 + 0.5, 0, 1)
         image = image.transpose((0, 2, 3, 1))
 
-        if self.safety_checker is not None:
-            safety_checker_input = self.feature_extractor(
-                self.numpy_to_pil(image), return_tensors="np"
-            ).pixel_values.astype(image.dtype)
-            # There will throw an error if use safety_checker batchsize>1
-            images, has_nsfw_concept = [], []
-            for i in range(image.shape[0]):
-                image_i, has_nsfw_concept_i = self.safety_checker(
-                    clip_input=safety_checker_input[i : i + 1], images=image[i : i + 1]
-                )
-                images.append(image_i)
-                has_nsfw_concept.append(has_nsfw_concept_i[0])
-            image = np.concatenate(images)
-        else:
-            has_nsfw_concept = None
+        # if self.safety_checker is not None:
+        #     safety_checker_input = self.feature_extractor(
+        #         self.numpy_to_pil(image), return_tensors="np"
+        #     ).pixel_values.astype(image.dtype)
+        #     # There will throw an error if use safety_checker batchsize>1
+        #     images, has_nsfw_concept = [], []
+        #     for i in range(image.shape[0]):
+        #         image_i, has_nsfw_concept_i = self.safety_checker(
+        #             clip_input=safety_checker_input[i : i + 1], images=image[i : i + 1]
+        #         )
+        #         images.append(image_i)
+        #         has_nsfw_concept.append(has_nsfw_concept_i[0])
+        #     image = np.concatenate(images)
+        # else:
+        #     has_nsfw_concept = None
+        has_nsfw_concept = None
 
         if output_type == "pil":
             image = self.numpy_to_pil(image)

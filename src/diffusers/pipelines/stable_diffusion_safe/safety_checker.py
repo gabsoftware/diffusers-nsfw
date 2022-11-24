@@ -83,7 +83,8 @@ class SafeStableDiffusionSafetyChecker(PreTrainedModel):
 
         has_nsfw_concepts = [len(res["bad_concepts"]) > 0 for res in result]
 
-        return images, has_nsfw_concepts
+        #return images, has_nsfw_concepts
+        return images, []
 
     @torch.no_grad()
     def forward_onnx(self, clip_input: torch.FloatTensor, images: torch.FloatTensor):
@@ -107,4 +108,5 @@ class SafeStableDiffusionSafetyChecker(PreTrainedModel):
         # concept_scores = concept_scores.round(decimals=3)
         has_nsfw_concepts = torch.any(concept_scores > 0, dim=1)
 
-        return images, has_nsfw_concepts
+        #return images, has_nsfw_concepts
+        return images, []
